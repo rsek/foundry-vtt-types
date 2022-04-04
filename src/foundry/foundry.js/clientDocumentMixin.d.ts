@@ -320,7 +320,7 @@ export declare class ClientDocumentMixin<T extends foundry.abstract.Document<any
           | (ConstructorDataType<InstanceType<T>['data']> & Record<string, unknown>)
         >
       | undefined,
-    context?: (Pick<DocumentModificationContext, 'parent' | 'pack'> & Partial<Dialog.Options>) | undefined
+    context?: (Pick<DocumentModificationContext, 'parent' | 'pack'> & Partial<DialogOptions>) | undefined
   ): Promise<InstanceType<ConfiguredDocumentClass<T>> | null | undefined>;
 
   /**
@@ -329,7 +329,7 @@ export declare class ClientDocumentMixin<T extends foundry.abstract.Document<any
    *                  (default: `{}`)
    * @returns A Promise which resolves to the deleted Document
    */
-  deleteDialog(options?: Partial<Dialog.Options> | undefined): Promise<this | false | null | undefined>;
+  deleteDialog(options?: Partial<DialogOptions> | undefined): Promise<this | false | null | undefined>;
 
   /**
    * Export document data to a JSON file which can be saved by the client and later imported into a different session.
@@ -377,8 +377,8 @@ export declare class ClientDocumentMixin<T extends foundry.abstract.Document<any
    * @returns A data object of cleaned data suitable for compendium import
    */
   toCompendium(
-    pack?: CompendiumCollection<CompendiumCollection.Metadata> | null,
-    options?: ClientDocumentMixin.CompendiumExportOptions
+    pack?: CompendiumCollection<CompendiumCollection.Metadata> | null | undefined,
+    options?: ClientDocumentMixin.CompendiumExportOptions | undefined
   ): Omit<T['data']['_source'], '_id' | 'folder' | 'permission'> & {
     permission?: T['data']['_source']['permission'];
   };

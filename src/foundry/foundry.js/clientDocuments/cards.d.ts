@@ -72,7 +72,8 @@ declare global {
      * Pass an array of specific Card documents from this document to some other Cards stack.
      * @param to      - Some other Cards document that is the destination for the pass operation
      * @param ids     - The embedded Card ids which should be passed
-     * @param options - (default: `{}`)
+     * @param options - Additional options which modify the pass operation
+     *                  (default: `{}`)
      * @returns An array of the Card embedded documents created within the destination stack
      */
     pass(
@@ -223,7 +224,7 @@ declare global {
     resetDialog(): Promise<InstanceType<ConfiguredDocumentClassForName<'Cards'>> | false | null>;
 
     /** @override */
-    deleteDialog(options?: Partial<Dialog.Options> | undefined): Promise<this | false | null | undefined>;
+    deleteDialog(options?: Partial<DialogOptions> | undefined): Promise<this | false | null | undefined>;
 
     // TODO: It's a bit weird that we have to do it in this generic way but otherwise there is an error overriding this. Investigate later.
     /** @override */
@@ -235,7 +236,7 @@ declare global {
             | (ConstructorDataType<foundry.data.CardsData> & Record<string, unknown>)
           >
         | undefined,
-      context?: (Pick<DocumentModificationContext, 'parent' | 'pack'> & Partial<Dialog.Options>) | undefined
+      context?: (Pick<DocumentModificationContext, 'parent' | 'pack'> & Partial<DialogOptions>) | undefined
     ): Promise<InstanceType<ConfiguredDocumentClass<T>> | null | undefined>;
   }
 
