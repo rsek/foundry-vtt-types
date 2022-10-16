@@ -2,7 +2,9 @@ import * as data from "../data/data.mjs";
 import { Document } from "../abstract/module.mjs";
 import { DocumentMetadata } from "../abstract/document.mjs";
 import type { BaseJournalEntry } from "./baseJournalEntry.js";
-import type { ConfiguredDocumentClass } from "../../../types/helperTypes.js";
+import type { ConfiguredDocumentClass, DocumentSubTypes } from "../../../types/helperTypes.js";
+import type { BaseUser } from "./baseUser.js";
+import type { CONST } from "../module.mjs.js";
 
 type JournalEntryPageMetadata = Merge<
   DocumentMetadata,
@@ -25,7 +27,20 @@ export declare class BaseJournalEntryPage extends Document<
   InstanceType<ConfiguredDocumentClass<typeof BaseJournalEntry>>,
   JournalEntryPageMetadata
 > {
-  static override get schema(): typeof data.JournalEntryPageData;
+  /**
+   * @param data    - Initial data from which to construct the JournalEntryPage. (default: `{}`)
+   * @param context - Construction context options (default: `{}`)
+   */
+  constructor(data?: DeepPartial<data.JournalEntryPageData>, context?: DocumentConstructionContext);
 
-  static override get metadata(): JournalEntryPageMetadata;
+  static readonly metadata: Readonly<JournalEntryPageMetadata>;
+
+  static defineSchema(): JournalEntryPageDataSchema;
+
+  /**
+   * The allowed set of JournalEntryPageData types which may exist.
+   */
+  static get TYPES(): DocumentSubTypes<"JournalEntryPage">[];
+
+  getUserLevel(user: BaseUser): ValueOf<typeof CONST.DOCUMENT_OWNERSHIP_LEVELS> | null;
 }

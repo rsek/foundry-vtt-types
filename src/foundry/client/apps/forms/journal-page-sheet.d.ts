@@ -13,12 +13,6 @@ declare global {
     ConcreteOptions extends JournalPageSheet.Options = JournalPageSheet.Options
   > extends DocumentSheet<ConcreteOptions, JournalEntryPage> {
     /**
-     * @param object  - The JournalEntryPage instance which is being edited.
-     * @param options - Application options
-     */
-    constructor(object: JournalEntryPage, options?: Partial<ConcreteOptions>);
-
-    /**
      * @defaultValue
      * ```typescript
      * foundry.utils.mergeObject(super.defaultOptions, {
@@ -46,7 +40,6 @@ declare global {
 
     override getData(options?: Partial<ConcreteOptions> | undefined): Promise<JournalPageSheet.Data<ConcreteOptions>>;
 
-    // FIXME: this should be private, but that needs to change on the ancestor classes, first.
     protected _renderInner(data: object): Promise<JQuery<HTMLElement>>;
   }
 
@@ -78,7 +71,7 @@ declare global {
 
     /**
      * Declare the format that we edit text content in for this sheet so we can perform conversions as necessary.
-     * @remarks {@link JournalTextPageSheet} always returns this as 2, but its descendant classes return 1 or 2.
+     * @defaultValue {@link CONST.JOURNAL_ENTRY_PAGE_FORMATS.HTML}
      */
     static get format(): ValueOf<typeof CONST.JOURNAL_ENTRY_PAGE_FORMATS>;
 
@@ -94,6 +87,7 @@ declare global {
 
     /**
      * The table of contents for this JournalTextPageSheet.
+     * @defaultValue `{}`
      */
     toc: ReturnType<typeof JournalEntryPage["buildTOC"]>;
 
@@ -207,20 +201,38 @@ declare global {
     interface Data extends JournalPageSheet.Data {
       flexRatio: boolean;
       isYouTube: boolean;
-      /**
-       * @remarks The name 'timestamp' here is inconsistent (elsewhere it refers only to a `number` value representing seconds), but this is what FVTT's source does 🤷
-       */
       timestamp: TimeComponents;
       yt: YouTube;
     }
 
+    /**
+     * Variables to be passed to YouTube's API.
+     * @see https://developers.google.com/youtube/player_parameters#Parameters
+     * @remarks Note that the `start` parameter diverges from its API description linked above. It isn't a number to be passed to the API directly, but a {@link TimeComponents} object (that FVTT converts into a number).
+     */
+    // Adapted from @types/youtube-player
     interface YouTubeVars {
-      playsinline: 1;
-      modestbranding: 1;
-      controls: 0 | 1;
-      autoplay: 0 | 1;
-      loop: 0 | 1;
-      start: TimeComponents;
+      autoplay?: 0 | 1 | undefined;
+      cc_lang_pref?: string | undefined;
+      cc_load_policy?: 1 | undefined;
+      color?: "red" | "white" | undefined;
+      controls?: 0 | 1 | undefined;
+      disablekb?: 0 | 1 | undefined;
+      enablejsapi?: 0 | 1 | undefined;
+      end?: number | undefined;
+      fs?: 0 | 1 | undefined;
+      hl?: string | undefined;
+      iv_load_policy?: 1 | 3 | undefined;
+      list?: string | undefined;
+      listType?: "playlist" | "search" | "user_uploads" | undefined;
+      loop?: 0 | 1 | undefined;
+      modestbranding?: 0 | 1 | undefined;
+      origin?: string | undefined;
+      playlist?: string | undefined;
+      playsinline?: 0 | 1 | undefined;
+      rel?: 0 | 1 | undefined;
+      start?: TimeComponents | undefined;
+      widget_referrer?: string | undefined;
     }
 
     interface TimeComponents {
@@ -256,7 +268,7 @@ declare global {
 
     activateListeners(html: JQuery<HTMLElement>): void;
 
-    getData(options?: Partial<JournalPDFPageSheet.Options> | undefined): Promise<JournalPDFPageSheet.SheetData>;
+    getData(options?: Partial<JournalPDFPageSheet.Options> | undefined): Promise<JournalPDFPageSheet.Data>;
 
     protected _renderInner(data: object): Promise<JQuery<HTMLElement>>;
 
@@ -274,7 +286,7 @@ declare global {
 
   namespace JournalPDFPageSheet {
     type Options = JournalPageSheet.Options;
-    type SheetData = JournalPageSheet.Data<JournalPDFPageSheet.Options> & {
+    type Data = JournalPageSheet.Data<JournalPDFPageSheet.Options> & {
       params: ReturnType<JournalPDFPageSheet["_getViewerParams"]>;
     };
   }
@@ -285,6 +297,7 @@ declare global {
   class MarkdownJournalPageSheet extends JournalTextPageSheet<MarkdownJournalPageSheet.Options> {
     /**
      * Store the dirty flag for this editor.
+     * @defaultValue `false`
      */
     protected _isDirty: boolean;
 
@@ -344,7 +357,7 @@ declare global {
     ): Promise<void>;
 
     /**
-     * @remarks This isn't present in FVTT's source, but is present to provide a more accurate representation of the typing.
+     * @remarks This isn't explicitly present in FVTT's source, but is present to provide a more accurate representation of the typing.
      * @see {@link JournalTextPageSheet.format}
      */
     static get format(): typeof CONST.JOURNAL_ENTRY_PAGE_FORMATS.HTML;
